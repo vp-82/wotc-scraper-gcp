@@ -3,12 +3,14 @@
 # Standard library imports
 from datetime import datetime
 import hashlib
+import sys
 from typing import Optional
 
 # Third-party imports
 # import pytest
 
 # Local imports
+sys.path.append(".")
 from src.ArticleHandler import ArticleLink, MTGArticle
 
 def test_article_link_init():

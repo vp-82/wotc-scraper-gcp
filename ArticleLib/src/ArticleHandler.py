@@ -11,7 +11,7 @@ class ArticleLink:
 
 
 class MTGArticle:
-    def __init__(self, article_link: ArticleLink, title: str, article_text: Optional[str]) -> None:
+    def __init__(self, article_link: ArticleLink, title: str, article_text: Optional[str] = None) -> None:
         self.article_link = article_link
         self.title = title
         self.article_text = article_text
