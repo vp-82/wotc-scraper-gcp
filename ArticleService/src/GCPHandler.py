@@ -5,8 +5,7 @@ from datetime import datetime
 import sys
 
 # Local imports
-sys.path.append(".")
-from src.ArticleHandler import ArticleLinkAdapter, ArticleLink
+from ArticleHandler import ArticleLinkAdapter, ArticleLink
 
 
 class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
@@ -37,15 +36,18 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
         links = []
         docs = self.collection.stream()
 
-        for doc in docs:
-            data = doc.to_dict()
-            link = ArticleLink(
-                link_url=data["url"],
-                link_added_at=data["link_added_at"]
-            )
-            links.append(link)
+        if docs:
+            for doc in docs:
+                data = doc.to_dict()
+                if "url" in data and "link_added_at" in data:
+                    link = ArticleLink(
+                        link_url=data["url"],
+                        link_added_at=data["link_added_at"]
+                    )
+                    links.append(link)
 
         return links
+
 
     def _get_link_by_hash(self, url_hash: str) -> List[ArticleLink]:
         doc_ref = self.collection.document(url_hash)
@@ -67,10 +69,11 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
 
         for doc in docs:
             data = doc.to_dict()
-            link = ArticleLink(
-                link_url=data["url"],
-                link_added_at=data["link_added_at"]
-            )
-            links.append(link)
+            if "url" in data and "link_added_at" in data:
+                link = ArticleLink(
+                    link_url=data["url"],
+                    link_added_at=data["link_added_at"]
+                )
+                links.append(link)
 
         return links
