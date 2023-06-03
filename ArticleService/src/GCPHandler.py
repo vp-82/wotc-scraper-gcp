@@ -35,7 +35,6 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
     def _get_all_links(self) -> List[ArticleLink]:
         links = []
         docs = self.collection.stream()
-
         if docs:
             for doc in docs:
                 data = doc.to_dict()
