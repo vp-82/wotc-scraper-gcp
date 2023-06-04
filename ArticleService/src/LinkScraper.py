@@ -61,7 +61,7 @@ class Scraper:
     def scrape_links(self, from_page: int, to_page: int) -> None:
         known_link_ids = self._load_known_link_ids()
 
-        for i in range(from_page, to_page + 1):
+        for i in range(from_page, to_page):
             soup = self._fetch_and_parse_page_content(i)
             links = self._extract_links_from_soup(soup)
             self._save_new_links(links, known_link_ids)
