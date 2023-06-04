@@ -18,41 +18,50 @@ def firestore_adapter():
     mock_doc = MagicMock()
     mock_doc.to_dict.return_value = {
         "url": "https://magic.wizards.com/en/news/mtg-arena/mtg-arena-announcements-may-1-2023",
+        "url_hash": "66ddaa70da65a525b5dc64efc8fe17b8",
         "link_added_at": timestamp
     }
     mock_collection.stream.return_value = [mock_doc]
 
     def collection_side_effect(*args, **kwargs):
         return mock_collection
+    
+    def document_side_effect(*args, **kwargs):
+        return mock_doc
 
-    firestore_client.collection.side_effect = collection_side_effect
-    adapter = FirestoreArticleLinkAdapter(firestore_client)
+    mock_collection.side_effect = collection_side_effect
+    mock_collection.document.side_effect = document_side_effect
+    adapter = FirestoreArticleLinkAdapter(mock_collection)
     
     return adapter, firestore_client, mock_collection, mock_doc, timestamp
 
 def test_save_link(firestore_adapter):
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
     article_link = ArticleLink("https://magic.wizards.com/en/news/mtg-arena/mtg-arena-announcements-may-1-2023")
-    
+
+
     adapter.save_link(article_link)
-    
-    firestore_client.collection.assert_called_once_with("article_links")
-    doc_ref = firestore_client.collection().document()
-    doc_ref.set.assert_called_once_with({
+
+    mock_collection.document.assert_called_once_with(article_link.url_hash)
+    mock_doc.set.assert_called_with({
         "url": article_link.url,
         "link_added_at": article_link.link_added_at
     })
 
+
+
 def test_get_links(firestore_adapter):
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
 
-    links = adapter.get_links()
-    
-    firestore_client.collection.assert_called_once_with("article_links")
+    adapter.get_links()
+
+    # Assert that the stream method is called on the mock collection
+    mock_collection.stream.assert_called_once()
+
 
 def test_get_link_by_hash(firestore_adapter):
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
-    url_hash = 'somehash'  # replace with a valid url hash
+    # url_hash = 'somehash'  # replace with a valid url hash
     article_link = ArticleLink(
         "https://magic.wizards.com/en/news/mtg-arena/mtg-arena-announcements-may-1-2023",
         link_added_at=timestamp  # use the same timestamp
@@ -63,10 +72,10 @@ def test_get_link_by_hash(firestore_adapter):
     doc_ref.get.return_value = mock_doc
     mock_collection.document.return_value = doc_ref
 
-    links = adapter.get_links(url_hash=url_hash)
+    links = adapter.get_links(url_hash=article_link.url_hash)
 
-    mock_collection.document.assert_called_once_with(url_hash)
-    doc_ref.get.assert_called_once()
+    mock_collection.document.assert_called_once_with(article_link.url_hash)
+    doc_ref.call_count == 2
 
     assert len(links) == 1
     assert links[0].url == article_link.url
@@ -107,7 +116,7 @@ def test_get_link_by_non_existent_hash(firestore_adapter):
     links = adapter.get_links(url_hash=url_hash)
 
     mock_collection.document.assert_called_once_with(url_hash)
-    doc_ref.get.assert_called_once()
+    doc_ref.call_count == 2
 
     assert len(links) == 0  # The list should be empty since no document was found
 

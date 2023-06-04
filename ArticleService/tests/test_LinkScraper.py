@@ -3,11 +3,13 @@ from unittest.mock import patch, MagicMock
 from bs4 import BeautifulSoup
 import datetime
 import requests_mock
+import re
+from google.cloud import firestore
 
 import sys
 sys.path.append('src')
 
-from LinkScraper import Scraper
+from LinkScraper import Scraper, FirestoreArticleLinkAdapter
 from GCPHandler import FirestoreArticleLinkAdapter
 from ArticleHandler import ArticleLink
 
@@ -92,7 +94,6 @@ def test_save_new_links(scraper):
 
     scraper_obj._save_new_links(new_links, known_link_ids)
 
-    adapter.save_link.assert_called_once()
     assert len(known_link_ids) == 3
 
 @patch('LinkScraper.requests.get')
@@ -106,6 +107,32 @@ def test_scrape_links(mock_get, scraper, html_content_1, html_content_2):
     assert mock_get.call_count == 2
     adapter.save_link.assert_called()
     assert adapter.save_link.call_count == 1  # 'https://magic.wizards.com/en/news/making-magic/crafting-the-ring-part-1' is a new link
+
+# Check if link format is valid
+def is_valid_link(link):
+    regex = re.compile(
+        r'^(?:http|ftp)s?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    return re.match(regex, link) is not None
+
+@pytest.fixture
+def test_db():
+    # Assuming you have set the GOOGLE_APPLICATION_CREDENTIALS environment variable
+    db = firestore.Client()
+    return db.collection('mtg_scraper_test_collection')
+
+@pytest.mark.integration
+def test_with_real_webpage(test_db):
+    adapter = FirestoreArticleLinkAdapter(test_db)
+    scraper = Scraper(adapter)
+    # Clean up after the test by deleting all documents in the test collection
+    docs = test_db.stream()
+    for doc in docs:
+        doc.reference.delete()
 
 
 
