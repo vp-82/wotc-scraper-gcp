@@ -22,7 +22,7 @@ def test_with_real_webpage(test_db):
     adapter = FirestoreArticleLinkAdapter(test_db)
     scraper = Scraper(adapter)
     scraper.scrape_links(1, 2)
-    # Clean up after the test by deleting all documents in the test collection
+    
     docs = test_db.stream()
     
     links = []
@@ -37,10 +37,14 @@ def test_with_real_webpage(test_db):
 
     assert len(links) > 0
     
-    # Clean up
+    # Clean up after the test by deleting all documents in the test collection
     docs = test_db.stream()
+    i = 0
     for doc in docs:
         doc.reference.delete()
+        i += 1
+    # Final test: check if the number of links matches with the number of cleaned up cocuments
+    assert len(links) == i
 
 
 
