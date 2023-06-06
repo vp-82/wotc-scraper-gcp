@@ -1,29 +1,43 @@
-brotlipy @ file:///Users/runner/miniforge3/conda-bld/brotlipy_1666764759924/work
-certifi==2022.12.7
-cffi @ file:///Users/runner/miniforge3/conda-bld/cffi_1671179893800/work
-charset-normalizer @ file:///home/conda/feedstock_root/build_artifacts/charset-normalizer_1678108872112/work
-colorama @ file:///home/conda/feedstock_root/build_artifacts/colorama_1666700638685/work
-conda==23.1.0
-conda-package-handling @ file:///home/conda/feedstock_root/build_artifacts/conda-package-handling_1669907009957/work
-conda_package_streaming @ file:///home/conda/feedstock_root/build_artifacts/conda-package-streaming_1669733752472/work
+beautifulsoup4==4.12.2
+CacheControl==0.13.0
+cachetools==5.3.1
+certifi==2023.5.7
+cffi==1.15.1
+charset-normalizer==3.1.0
 coverage==7.2.7
-cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography-split_1679811336455/work
-exceptiongroup==1.1.1
-idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1663625384323/work
+cryptography==41.0.1
+firebase-admin==6.1.0
+google-api-core==2.11.0
+google-api-python-client==2.88.0
+google-auth==2.19.1
+google-auth-httplib2==0.1.0
+google-cloud-core==2.3.2
+google-cloud-firestore==2.11.1
+google-cloud-storage==2.9.0
+google-crc32c==1.5.0
+google-resumable-media==2.5.0
+googleapis-common-protos==1.59.0
+grpcio==1.54.2
+grpcio-status==1.54.2
+httplib2==0.22.0
+idna==3.4
 iniconfig==2.0.0
+msgpack==1.0.5
 packaging==23.1
-pluggy @ file:///home/conda/feedstock_root/build_artifacts/pluggy_1667232663820/work
-pycosat @ file:///Users/runner/miniforge3/conda-bld/pycosat_1666836623787/work
-pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1636257122734/work
-pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1680037383858/work
-PySocks @ file:///home/conda/feedstock_root/build_artifacts/pysocks_1661604839144/work
+pluggy==1.0.0
+proto-plus==1.22.2
+protobuf==4.23.2
+pyasn1==0.5.0
+pyasn1-modules==0.3.0
+pycparser==2.21
+PyJWT==2.7.0
+pyparsing==3.0.9
 pytest==7.3.1
 pytest-cov==4.1.0
-requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1680286922386/work
-ruamel.yaml @ file:///Users/runner/miniforge3/conda-bld/ruamel.yaml_1678273098088/work
-ruamel.yaml.clib @ file:///Users/runner/miniforge3/conda-bld/ruamel.yaml.clib_1670412881259/work
-tomli==2.0.1
-toolz @ file:///home/conda/feedstock_root/build_artifacts/toolz_1657485559105/work
-tqdm @ file:///home/conda/feedstock_root/build_artifacts/tqdm_1677948868469/work
-urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1678635778344/work
-zstandard==0.19.0
+requests==2.31.0
+requests-mock==1.10.0
+rsa==4.9
+six==1.16.0
+soupsieve==2.4.1
+uritemplate==4.1.1
+urllib3==1.26.16
