@@ -5,8 +5,8 @@ sys.path.append('src')
 import pytest
 from datetime import datetime
 from unittest.mock import MagicMock
-from ArticleHandler import ArticleLink
-from GCPHandler import FirestoreArticleLinkAdapter
+from src.ArticleHandler import ArticleLink
+from src.GCPHandler import FirestoreArticleLinkAdapter
 
 # This is a pytest fixture. It's a way of setting up some code that
 # you want to share between multiple tests.

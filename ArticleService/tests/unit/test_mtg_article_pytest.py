@@ -5,7 +5,7 @@ sys.path.append('src')
 from datetime import datetime
 import hashlib
 import pytest
-from ArticleHandler import ArticleLink, ArticleLinkAdapter
+from src.ArticleHandler import ArticleLink, ArticleLinkAdapter
 
 # Define a fixture for the link URL.
 @pytest.fixture
