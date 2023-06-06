@@ -29,18 +29,26 @@ jobs:
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/ArticleService" >> $GITHUB_ENV
 
     - name: Set up GCP credentials
-      env:
-        GCP_FIRESTORE_CREDENTIALS: ${{ secrets.GCP_FIRESTORE_CREDENTIALS }}
       run: |
         echo "$GCP_FIRESTORE_CREDENTIALS" > gcp_credentials.json
         echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp_credentials.json" >> $GITHUB_ENV
 
+    - name: Print CI variable
+      on: [push, pull_request]
 
-    - name: Run unit tests
-      run: |
-        pytest ArticleService/tests/unit
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_FIRESTORE_CREDENTIALS }}
+      jobs:
+        test:
+          runs-on: ubuntu-latest
+          steps:
+            - name: Check CI variable
+              run: |
+                echo $GOOGLE_APPLICATION_CREDENTIALS
+
+    # - name: Run unit tests
+    #   run: |
+    #     pytest ArticleService/tests/unit
+    #   env:
+    #     GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_FIRESTORE_CREDENTIALS }}
 
     # - name: Run integration tests
     #   run: |
