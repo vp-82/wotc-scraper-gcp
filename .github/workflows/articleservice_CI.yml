@@ -28,6 +28,14 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/ArticleService" >> $GITHUB_ENV
 
+    - name: Set up GCP credentials
+      env:
+        GCP_FIRESTORE_CREDENTIALS: ${{ secrets.GCP_FIRESTORE_CREDENTIALS }}
+      run: |
+        echo "$GCP_FIRESTORE_CREDENTIALS" > gcp_credentials.json
+        echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp_credentials.json" >> $GITHUB_ENV
+
+
     - name: Run unit tests
       run: |
         pytest tests/unit
