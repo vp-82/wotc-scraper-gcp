@@ -38,7 +38,7 @@ jobs:
 
     - name: Run unit tests
       run: |
-        pytest tests/unit
+        pytest ArticleService/tests/unit
 
     # - name: Run integration tests
     #   run: |
