@@ -35,7 +35,7 @@ jobs:
 
     - name: Print CI variable
       run: |
-            echo $GOOGLE_APPLICATION_CREDENTIALS
+          echo $GOOGLE_APPLICATION_CREDENTIALS
 
     # - name: Run unit tests
     #   run: |
