@@ -35,6 +35,21 @@ def html_content_2():
     """
 
 @pytest.fixture
+def html_content_two_articles():
+    return """
+    <article data-ctf-id="6un7L8lTRL696HYxwyVICi" class="css-415ug css-o3Y69">
+        <a href="/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields">
+            <h3 class="css-9f4rq">The Lord of the Rings: Tales of Middle-earth™ Battle of the Pelennor Fields Statement</h3>
+        </a>
+    </article>
+        <article data-ctf-id="3J34TTSUAm8MO8o9fjk5Ek" class="css-415ug css-o3Y69">
+        <a href="/en/news/making-magic/crafting-the-ring-part-1">
+            <h3 class="css-9f4rq">Crafting the Ring, Part 1</h3>
+        </a>
+    </article>
+    """
+
+@pytest.fixture
 def scraper():
     adapter = MagicMock(spec=FirestoreArticleLinkAdapter)
     return Scraper(adapter), adapter
@@ -98,14 +113,14 @@ def test_save_new_links(scraper):
     assert len(known_link_ids) == 3
 
 @patch('LinkScraper.requests.get')
-def test_scrape_links(mock_get, scraper, html_content_1, html_content_2):
+def test_scrape_links(mock_get, scraper, html_content_two_articles):
     scraper_obj, adapter = scraper
-    mock_get.side_effect = [MagicMock(text=html_content_1), MagicMock(text=html_content_2)]
+    mock_get.side_effect = [MagicMock(text=html_content_two_articles)]
     adapter.get_links.return_value = [ArticleLink('https://magic.wizards.com/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields', datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S"))] 
 
     scraper_obj.scrape_links(1, 2)
 
-    assert mock_get.call_count == 2
+    assert mock_get.call_count == 1
     adapter.save_link.assert_called()
     assert adapter.save_link.call_count == 1  # 'https://magic.wizards.com/en/news/making-magic/crafting-the-ring-part-1' is a new link
 
