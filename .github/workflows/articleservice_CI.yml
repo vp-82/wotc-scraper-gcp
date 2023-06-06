@@ -34,15 +34,8 @@ jobs:
         echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp_credentials.json" >> $GITHUB_ENV
 
     - name: Print CI variable
-      on: [push, pull_request]
-
-      jobs:
-        test:
-          runs-on: ubuntu-latest
-          steps:
-            - name: Check CI variable
-              run: |
-                echo $GOOGLE_APPLICATION_CREDENTIALS
+      run: |
+            echo $GOOGLE_APPLICATION_CREDENTIALS
 
     # - name: Run unit tests
     #   run: |
