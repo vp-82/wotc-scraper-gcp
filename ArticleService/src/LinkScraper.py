@@ -9,8 +9,8 @@ from firebase_admin import auth, credentials, firestore
 import firebase_admin
 import logging
 
-from GCPHandler import FirestoreArticleLinkAdapter
-from ArticleHandler import ArticleLink
+from src.GCPHandler import FirestoreArticleLinkAdapter
+from src.ArticleHandler import ArticleLink
 
 
 class Scraper:

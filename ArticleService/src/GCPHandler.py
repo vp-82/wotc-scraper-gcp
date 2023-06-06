@@ -5,7 +5,7 @@ from datetime import datetime
 import sys
 
 # Local imports
-from ArticleHandler import ArticleLinkAdapter, ArticleLink
+from src.ArticleHandler import ArticleLinkAdapter, ArticleLink
 
 
 

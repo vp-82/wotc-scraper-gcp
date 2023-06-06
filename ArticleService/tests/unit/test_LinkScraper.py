@@ -8,11 +8,11 @@ from google.cloud import firestore
 import os
 
 import sys
-sys.path.append('src')
+# sys.path.append('ArticleService')
 
-from LinkScraper import Scraper, FirestoreArticleLinkAdapter
-from GCPHandler import FirestoreArticleLinkAdapter
-from ArticleHandler import ArticleLink
+from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
+from src.GCPHandler import FirestoreArticleLinkAdapter
+from src.ArticleHandler import ArticleLink
 
 @pytest.fixture
 def html_content_1():
@@ -54,7 +54,7 @@ def scraper():
     adapter = MagicMock(spec=FirestoreArticleLinkAdapter)
     return Scraper(adapter), adapter
 
-@patch('LinkScraper.requests.get')
+@patch('src.LinkScraper.requests.get')
 def test_fetch_and_parse_page(mock_get, scraper):
     mock_response = MagicMock()
     mock_get.return_value = mock_response
@@ -112,7 +112,7 @@ def test_save_new_links(scraper):
 
     assert len(known_link_ids) == 3
 
-@patch('LinkScraper.requests.get')
+@patch('src.LinkScraper.requests.get')
 def test_scrape_links(mock_get, scraper, html_content_two_articles):
     scraper_obj, adapter = scraper
     mock_get.side_effect = [MagicMock(text=html_content_two_articles)]

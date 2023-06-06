@@ -6,8 +6,8 @@ import os
 import sys
 sys.path.append('src')
 
-from LinkScraper import Scraper, FirestoreArticleLinkAdapter
-from ArticleHandler import ArticleLink
+from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
+from src.ArticleHandler import ArticleLink
 
 
 @pytest.fixture
