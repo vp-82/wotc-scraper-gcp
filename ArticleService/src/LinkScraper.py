@@ -20,8 +20,15 @@ class Scraper:
 
     def _fetch_and_parse_page_content(self, page_number: int) -> BeautifulSoup:
         time.sleep(2)
-        search_response = requests.get(f'https://magic.wizards.com/en/news/archive?search&page={page_number}&category=all&author=all&order=newest')
-        return BeautifulSoup(search_response.text, 'html.parser')
+        try:
+            response = requests.get(f'https://magic.wizards.com/en/news/archive?search&page={page_number}&category=all&author=all&order=newest')
+            response.raise_for_status()
+            self.logger.info(f'Successfully fetched and parsed content from page number {page_number}')
+        except requests.HTTPError as http_err:
+            self.logger.error(f'HTTP error occurred: {http_err}') 
+        except Exception as err:
+            self.logger.error(f'Error occurred: {err}') 
+        return BeautifulSoup(response.text, 'html.parser')
 
     def _extract_links_from_soup(self, soup: BeautifulSoup) -> List[str]:
         links = []
@@ -29,11 +36,12 @@ class Scraper:
         for entry in entry_list:
             link_tag = entry.find("a", href=True)
             if link_tag:
-                link_path = link_tag.get('href')  # renamed link_id to link_path
-                if link_path.startswith("/"):  # if the link is a relative URL
+                link_path = link_tag.get('href')  
+                if link_path.startswith("/"):
                     links.append('https://magic.wizards.com' + link_path)
+        self.logger.info(f'Extracted {len(links)} links from the soup')
         return links
-
+    
 
     def _create_link_info(self, link: str) -> ArticleLink:
         return ArticleLink(
@@ -59,12 +67,13 @@ class Scraper:
                 self.logger.info(f'Link with Id {link_info.url_hash} already exists')
 
     def scrape_links(self, from_page: int, to_page: int) -> None:
+        self.logger.info(f'Starting to scrape links from page {from_page} to page {to_page}')
         known_link_ids = self._load_known_link_ids()
-
         for i in range(from_page, to_page):
             soup = self._fetch_and_parse_page_content(i)
             links = self._extract_links_from_soup(soup)
             self._save_new_links(links, known_link_ids)
-
             if i % 10 == 0:
                 self.logger.info(f'Page: {i}')
+        self.logger.info(f'Finished scraping links from page {from_page} to page {to_page}')
+
