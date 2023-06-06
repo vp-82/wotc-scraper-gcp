@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def test_db():
-    if not os.getenv("CI"):  # Check if the CI environment variable is set
+    if not os.getenv("CI_PIPELINE"):  # Check if the CI environment variable is set
     # We're in the local development environment
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./tests/mtg-scraper-385015-aad053a61746.json"
         # If we're in the CI environment, the GOOGLE_APPLICATION_CREDENTIALS
         # environment variable is already set in the workflow file.
-        
+
     db = firestore.Client()
     return db.collection('mtg_scraper_test_collection')
 
