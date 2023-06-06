@@ -28,6 +28,10 @@ jobs:
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/ArticleService" >> $GITHUB_ENV
 
+    - name: Set up CI variable
+      run: |
+        echo "CI_PIPELINE=true" >> $GITHUB_ENV
+
     - name: Set up GCP credentials
       run: |
         echo "$GCP_FIRESTORE_CREDENTIALS" > gcp_credentials.json
@@ -37,7 +41,7 @@ jobs:
       run: |
           echo $GOOGLE_APPLICATION_CREDENTIALS
 
-    - name: Print GOOGLE variable
+    - name: Print CI variable
       run: |
           echo $CI_PIPELINE
 
