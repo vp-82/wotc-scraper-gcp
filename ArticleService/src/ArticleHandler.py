@@ -3,6 +3,7 @@ from datetime import datetime
 import hashlib
 import abc
 from typing import List, Optional
+import logging
 
 class ArticleLink:
     def __init__(self, link_url: str, link_added_at: Optional[datetime] = None) -> None:
@@ -16,6 +17,9 @@ class ArticleLink:
 
 
 class ArticleLinkAdapter(abc.ABC):
+    def __init__(self) -> None:
+        self.logger = logging.getLogger(__name__)
+        
     @abc.abstractmethod
     def save_link(self, article_link: ArticleLink) -> None:  # pragma: no cover
         """Save an ArticleLink to the storage."""

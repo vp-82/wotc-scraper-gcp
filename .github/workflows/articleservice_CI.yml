@@ -30,9 +30,7 @@ jobs:
 
     - name: Run unit tests
       run: |
-        pytest ArticleService/tests/unit/test_GCPHandler.py
-        pytest ArticleService/tests/unit/test_LinkScraper.py
-        pytest ArticleService/tests/unit/test_mtg_article_pytest.py
+        pytest tests/unit
 
     # - name: Run integration tests
     #   run: |

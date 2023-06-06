@@ -6,13 +6,15 @@ import requests_mock
 import re
 from google.cloud import firestore
 import os
+import logging
 
-import sys
-# sys.path.append('ArticleService')
 
 from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
 from src.GCPHandler import FirestoreArticleLinkAdapter
 from src.ArticleHandler import ArticleLink
+
+# Setup logger right below imports
+logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def html_content_1():
@@ -56,6 +58,9 @@ def scraper():
 
 @patch('src.LinkScraper.requests.get')
 def test_fetch_and_parse_page(mock_get, scraper):
+    logger = logging.getLogger('test_fetch_and_parse_page')
+    logger.info('Running test_fetch_and_parse_page...')
+
     mock_response = MagicMock()
     mock_get.return_value = mock_response
     page_number = 1
@@ -66,6 +71,9 @@ def test_fetch_and_parse_page(mock_get, scraper):
 
 
 def test_extract_links_from_soup(scraper, html_content_1, html_content_2):
+    logger = logging.getLogger('test_extract_links_from_soup')
+    logger.info('Running test_extract_links_from_soup...')
+
     soup1 = BeautifulSoup(html_content_1, 'html.parser')
     soup2 = BeautifulSoup(html_content_2, 'html.parser')
 
@@ -93,6 +101,12 @@ def test_load_known_link_ids(scraper):
     assert result == [link1.url_hash, link2.url_hash]
 
 def test_create_link_info(scraper):
+    logger = logging.getLogger('test_create_link_info')
+    logger.info('Running test_create_link_info...')
+
+    logger = logging.getLogger('test_load_known_link_ids')
+    logger.info('Running test_load_known_link_ids...')
+
     scraper_obj, _ = scraper
     link = 'https://magic.wizards.com/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields'
     result = scraper_obj._create_link_info(link)
@@ -102,6 +116,9 @@ def test_create_link_info(scraper):
     assert isinstance(result.link_added_at, str)  # as you convert the datetime object to a string
 
 def test_save_new_links(scraper):
+    logger = logging.getLogger('test_save_new_links')
+    logger.info('Running test_save_new_links...')
+
     scraper_obj, adapter = scraper
     known_link_ids = [ArticleLink(url, datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S")).url_hash 
                       for url in ['https://magic.wizards.com/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields', 
@@ -144,6 +161,9 @@ def test_db():
 
 @pytest.mark.integration
 def test_with_real_webpage(test_db):
+    logger = logging.getLogger('test_with_real_webpage')
+    logger.info('Running test_with_real_webpage...')
+
     adapter = FirestoreArticleLinkAdapter(test_db)
     scraper = Scraper(adapter)
     scraper.scrape_links(1, 2)

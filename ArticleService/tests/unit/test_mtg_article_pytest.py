@@ -1,11 +1,13 @@
 # test_mtg_article_pytest.py
-import sys
-sys.path.append('src')
+import logging
 
 from datetime import datetime
 import hashlib
 import pytest
 from src.ArticleHandler import ArticleLink, ArticleLinkAdapter
+
+# Setup logger right below imports
+logger = logging.getLogger(__name__)
 
 # Define a fixture for the link URL.
 @pytest.fixture

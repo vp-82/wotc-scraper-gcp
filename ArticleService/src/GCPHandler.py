@@ -12,6 +12,7 @@ from src.ArticleHandler import ArticleLinkAdapter, ArticleLink
 
 class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
     def __init__(self, firestore_collection: firestore_v1.collection.CollectionReference) -> None:
+        super().__init__()
         self.collection = firestore_collection
 
 
@@ -21,6 +22,7 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
             "url": article_link.url,
             "link_added_at": article_link.link_added_at
         })
+        self.logger.info(f'Successfully saved link: {article_link.url}')
 
 
     def get_links(self, url_hash: Optional[str] = None, start_date: Optional[datetime] = None,
@@ -61,6 +63,7 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
             return []
 
     def _get_links_by_date_range(self, start_date: datetime, end_date: datetime) -> List[ArticleLink]:
+        self.logger.info(f'Retrieving links between dates: {start_date} - {end_date}')
         links = []
         query = self.collection.where("link_added_at", ">=", start_date).where("link_added_at", "<=", end_date)
         docs = query.stream()

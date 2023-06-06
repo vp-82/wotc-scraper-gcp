@@ -1,13 +1,14 @@
 import pytest
 from google.cloud import firestore
 import os
+import time
 
-import sys
-sys.path.append('src')
+import logging
 
 from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
 from src.ArticleHandler import ArticleLink
 
+logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def test_db():
@@ -16,13 +17,24 @@ def test_db():
     db = firestore.Client()
     return db.collection('mtg_scraper_test_collection')
 
-@pytest.mark.integration
+@pytest.mark.performance
 def test_with_real_webpage(test_db):
+    logger.info("Starting performance test with real webpage...")
+
     adapter = FirestoreArticleLinkAdapter(test_db)
     scraper = Scraper(adapter)
+
+    logger.info("Scraping links...")
+    start_time = time.time()  # Save the current time
     scraper.scrape_links(1, 10)
-    # Clean up after the test by deleting all documents in the test collection
+    elapsed_time = time.time() - start_time  # Calculate the elapsed time
+    logger.info(f"Finished scraping links, it took {elapsed_time} seconds.")
+
+    logger.info("Storing links in the database...")
+    start_time = time.time()
     docs = test_db.stream()
+    elapsed_time = time.time() - start_time
+    logger.info(f"Stored links in the database, it took {elapsed_time} seconds.")
     
     links = []
     for doc in docs:
@@ -35,15 +47,17 @@ def test_with_real_webpage(test_db):
             links.append(link)
 
     assert len(links) > 0
-    
-    # Clean up after the test by deleting all documents in the test collection
+
+    logger.info("Cleaning up the database after test...")
+    start_time = time.time()
     docs = test_db.stream()
     i = 0
     for doc in docs:
         doc.reference.delete()
         i += 1
-    # Final test: check if the number of links matches with the number of cleaned up cocuments
+    elapsed_time = time.time() - start_time
+    logger.info(f"Cleaned up the database after test, it took {elapsed_time} seconds.")
+
+    # Final test: check if the number of links matches with the number of cleaned up documents
     assert len(links) == i
-
-
-
+    logger.info("Integration test completed successfully.")

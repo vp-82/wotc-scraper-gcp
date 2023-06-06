@@ -3,11 +3,13 @@ from unittest.mock import patch, MagicMock
 from google.cloud import firestore
 import os
 
-import sys
-sys.path.append('src')
 
 from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
 from src.ArticleHandler import ArticleLink
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture
@@ -19,10 +21,14 @@ def test_db():
 
 @pytest.mark.integration
 def test_with_real_webpage(test_db):
+    logger.info("Starting integration test with real webpage...")
     adapter = FirestoreArticleLinkAdapter(test_db)
     scraper = Scraper(adapter)
+
+    logger.info("Scraping links...")
     scraper.scrape_links(1, 2)
-    
+
+    logger.info("Storing links in the database...")
     docs = test_db.stream()
     
     links = []
@@ -36,15 +42,18 @@ def test_with_real_webpage(test_db):
             links.append(link)
 
     assert len(links) > 0
-    
-    # Clean up after the test by deleting all documents in the test collection
+
+    logger.info("Cleaning up the database after test...")
     docs = test_db.stream()
     i = 0
     for doc in docs:
         doc.reference.delete()
         i += 1
-    # Final test: check if the number of links matches with the number of cleaned up cocuments
+
+    # Final test: check if the number of links matches with the number of cleaned up documents
     assert len(links) == i
+    logger.info("Integration test completed successfully.")
+
 
 
 

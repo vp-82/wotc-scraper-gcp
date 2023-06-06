@@ -1,12 +1,15 @@
 # test_GCPHandler_pytest.py
 import sys
-sys.path.append('src')
+import logging
 
 import pytest
 from datetime import datetime
 from unittest.mock import MagicMock
 from src.ArticleHandler import ArticleLink
 from src.GCPHandler import FirestoreArticleLinkAdapter
+
+# Setup logger right below imports
+logger = logging.getLogger(__name__)
 
 # This is a pytest fixture. It's a way of setting up some code that
 # you want to share between multiple tests.
@@ -36,10 +39,12 @@ def firestore_adapter():
     return adapter, firestore_client, mock_collection, mock_doc, timestamp
 
 def test_save_link(firestore_adapter):
+    logger = logging.getLogger('test_save_link')
+
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
     article_link = ArticleLink("https://magic.wizards.com/en/news/mtg-arena/mtg-arena-announcements-may-1-2023")
 
-
+    logger.info(f"Saving link: {article_link.url}")
     adapter.save_link(article_link)
 
     mock_collection.document.assert_called_once_with(article_link.url_hash)
@@ -51,8 +56,11 @@ def test_save_link(firestore_adapter):
 
 
 def test_get_links(firestore_adapter):
+    logger = logging.getLogger('test_get_links')
+
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
 
+    logger.info(f"Get Links...")
     adapter.get_links()
 
     # Assert that the stream method is called on the mock collection
@@ -60,6 +68,8 @@ def test_get_links(firestore_adapter):
 
 
 def test_get_link_by_hash(firestore_adapter):
+    logger = logging.getLogger('test_get_link_by_hash')
+
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
     # url_hash = 'somehash'  # replace with a valid url hash
     article_link = ArticleLink(
@@ -72,6 +82,7 @@ def test_get_link_by_hash(firestore_adapter):
     doc_ref.get.return_value = mock_doc
     mock_collection.document.return_value = doc_ref
 
+    logger.info(f"Get link by hash: {article_link.url_hash}")
     links = adapter.get_links(url_hash=article_link.url_hash)
 
     mock_collection.document.assert_called_once_with(article_link.url_hash)
@@ -82,6 +93,7 @@ def test_get_link_by_hash(firestore_adapter):
     assert links[0].link_added_at == article_link.link_added_at
 
 def test_get_links_by_date_range(firestore_adapter):
+    logger = logging.getLogger('test_get_links_by_date_range')
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
     start_date = datetime.now()
     end_date = start_date  # replace with valid start and end dates
@@ -93,6 +105,7 @@ def test_get_links_by_date_range(firestore_adapter):
     mock_query.where.return_value = mock_query  # return mock_query on second where call
     mock_collection.where.return_value = mock_query
 
+    logger.info(f"Get link by startdate and enddate: start: {start_date}, end: {end_date}")
     links = adapter.get_links(start_date=start_date, end_date=end_date)
 
     mock_collection.where.assert_called_once_with("link_added_at", ">=", start_date)
@@ -104,6 +117,7 @@ def test_get_links_by_date_range(firestore_adapter):
     assert links[0].link_added_at == article_link.link_added_at
 
 def test_get_link_by_non_existent_hash(firestore_adapter):
+    logger = logging.getLogger('test_get_link_by_non_existent_hash')
     adapter, firestore_client, mock_collection, mock_doc, timestamp = firestore_adapter
     url_hash = 'nonexistenthash'
 
@@ -112,7 +126,7 @@ def test_get_link_by_non_existent_hash(firestore_adapter):
     mock_doc.exists = False  # make the document non-existent
     doc_ref.get.return_value = mock_doc
     mock_collection.document.return_value = doc_ref
-
+    logger.info(f"Get link by non existing hash: {url_hash}")
     links = adapter.get_links(url_hash=url_hash)
 
     mock_collection.document.assert_called_once_with(url_hash)
