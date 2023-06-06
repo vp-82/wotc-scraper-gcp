@@ -154,8 +154,15 @@ def is_valid_link(link):
 
 @pytest.fixture
 def test_db():
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="./tests/mtg-scraper-385015-aad053a61746.json"
-    # Assuming you have set the GOOGLE_APPLICATION_CREDENTIALS environment variable
+    if os.getenv("CI_PIPELINE") == "true":
+        # We're in the CI environment, the GOOGLE_APPLICATION_CREDENTIALS
+        # environment variable is already set in the workflow file.
+        pass
+    else:
+        # We're in the local development environment
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./tests/mtg-scraper-385015-aad053a61746.json"
+
+
     db = firestore.Client()
     return db.collection('mtg_scraper_test_collection')
 

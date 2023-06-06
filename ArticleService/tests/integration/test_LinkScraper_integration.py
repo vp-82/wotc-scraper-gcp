@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def test_db():
-    if os.getenv("CI") == "true":
+    if os.getenv("CI_PIPELINE") == "true":
         # We're in the CI environment, the GOOGLE_APPLICATION_CREDENTIALS
         # environment variable is already set in the workflow file.
         pass
