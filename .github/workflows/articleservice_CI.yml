@@ -25,6 +25,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r ArticleService/requirements.txt
 
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/ArticleService" >> $GITHUB_ENV
+
     - name: Run unit tests
       run: |
         pytest ArticleService/tests/unit/test_GCPHandler.py
