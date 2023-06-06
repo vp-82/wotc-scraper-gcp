@@ -45,11 +45,9 @@ jobs:
       run: |
           echo $CI_PIPELINE
 
-    # - name: Run unit tests
-    #   run: |
-    #     pytest ArticleService/tests/unit
-    #   env:
-    #     GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_FIRESTORE_CREDENTIALS }}
+    - name: Run unit tests
+      run: |
+        pytest ArticleService/tests/unit
 
     # - name: Run integration tests
     #   run: |
