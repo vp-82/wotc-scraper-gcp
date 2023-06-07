@@ -35,7 +35,7 @@ jobs:
     - name: Set up GCP credentials
       run: |
           '$GCP_FIRESTORE_CREDENTIALS' | base64 --decode | jq > gcp-credentials.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp_credentials.json" >> $GITHUB_ENV
+          echo "GOOGLE_APPLICATION_CREDENTIALS=gcp_credentials.json" >> $GITHUB_ENV
 
     - name: Print GOOGLE variable
       run: |
