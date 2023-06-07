@@ -1,3 +1,5 @@
+https://github.com/marketplace/actions/authenticate-to-google-cloud#setting-up-workload-identity-federation
+
 (base) ➜  tests git:(main) ✗ export PROJECT_ID="mtg-scraper-385015" # update with your value
 (base) ➜  tests git:(main) ✗ gcloud iam service-accounts create "github-ci-service-account" \
   --project "${PROJECT_ID}"

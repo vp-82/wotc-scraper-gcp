@@ -47,9 +47,9 @@ jobs:
 
     - name: Run integration tests
       run: |
-        pytest -m integration ArticleService/tests/test_mtg_article_pytest.py
+        pytest -m integration ArticleService/tests/integration/test_LinkScraper_integration.py
 
     # Uncomment the following section when you have performance tests ready to be included
     - name: Run performance tests
       run: |
-        pytest -m performance ArticleService/tests/your_performance_tests_file.py
+        pytest -m performance ArticleService/tests/performance/test_LinkScraper_performance.py
