@@ -34,15 +34,8 @@ jobs:
 
     - name: Set up GCP credentials
       run: |
-          echo "$GCP_FIRESTORE_CREDENTIALS" > gcp_credentials.json
-          cat gcp_credentials.json  # for debugging only
+          '$GCP_FIRESTORE_CREDENTIALS' | base64 --decode | jq > gcp-credentials.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcp_credentials.json" >> $GITHUB_ENV
-
-    - name: Debug up GCP credentials
-      run: |
-          echo "$(cat gcp_credentials.json)"  # for debugging only
-          
-
 
     - name: Print GOOGLE variable
       run: |
@@ -52,9 +45,9 @@ jobs:
       run: |
           echo $CI_PIPELINE
 
-    # - name: Run unit tests
-    #   run: |
-    #     pytest ArticleService/tests/unit
+    - name: Run unit tests
+      run: |
+        pytest ArticleService/tests/unit
 
     # - name: Run integration tests
     #   run: |
