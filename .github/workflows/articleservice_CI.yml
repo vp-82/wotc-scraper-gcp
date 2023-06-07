@@ -10,10 +10,19 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: 'projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool/providers/wotc-scraper-provider'
+        service_account: 'github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com'
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -32,22 +41,10 @@ jobs:
       run: |
         echo "CI_PIPELINE=true" >> $GITHUB_ENV
 
-    - name: Set up GCP credentials
-      run: |
-          '$GCP_FIRESTORE_CREDENTIALS' | base64 --decode | jq > gcp-credentials.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=gcp_credentials.json" >> $GITHUB_ENV
-
-    - name: Print GOOGLE variable
-      run: |
-          echo $GOOGLE_APPLICATION_CREDENTIALS
-
-    - name: Print CI variable
-      run: |
-          echo $CI_PIPELINE
-
     - name: Run unit tests
       run: |
         pytest ArticleService/tests/unit
+
 
     # - name: Run integration tests
     #   run: |
