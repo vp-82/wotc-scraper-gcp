@@ -40,7 +40,8 @@ jobs:
 
     - name: Debug up GCP credentials
       run: |
-          cat gcp_credentials.json  # for debugging only
+          echo "$(cat cat gcp_credentials.json)"  # for debugging only
+          
 
 
     - name: Print GOOGLE variable
