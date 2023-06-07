@@ -45,12 +45,11 @@ jobs:
       run: |
         pytest ArticleService/tests/unit
 
+    - name: Run integration tests
+      run: |
+        pytest -m integration ArticleService/tests/test_mtg_article_pytest.py
 
-    # - name: Run integration tests
-    #   run: |
-    #     pytest -m integration ArticleService/tests/test_mtg_article_pytest.py
-
-  # Uncomment the following section when you have performance tests ready to be included
-  # - name: Run performance tests
-  #   run: |
-  #     pytest -m performance ArticleService/tests/your_performance_tests_file.py
+    # Uncomment the following section when you have performance tests ready to be included
+    - name: Run performance tests
+      run: |
+        pytest -m performance ArticleService/tests/your_performance_tests_file.py

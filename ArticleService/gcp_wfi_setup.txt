@@ -1,0 +1,84 @@
+(base) ➜  tests git:(main) ✗ export PROJECT_ID="mtg-scraper-385015" # update with your value
+(base) ➜  tests git:(main) ✗ gcloud iam service-accounts create "github-ci-service-account" \
+  --project "${PROJECT_ID}"
+Created service account [github-ci-service-account].
+(base) ➜  tests git:(main) ✗ gcloud services enable iamcredentials.googleapis.com \
+  --project "${PROJECT_ID}"
+Operation "operations/acat.p2-1030920709279-e8887edc-e13b-4e96-abcf-a81128e3ca62" finished successfully.
+(base) ➜  tests git:(main) ✗ gcloud iam workload-identity-pools create "wotc-scraper-pool" \
+  --project="${PROJECT_ID}" \
+  --location="global" \
+  --display-name="wotc-scraper-pool"
+Created workload identity pool [wotc-scraper-pool].
+(base) ➜  tests git:(main) ✗ gcloud iam workload-identity-pools describe "wotc-scraper-pool" \
+  --project="${PROJECT_ID}" \
+  --location="global" \
+  --format="value(name)"
+projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool
+(base) ➜  tests git:(main) ✗ gcloud iam workload-identity-pools describe "wotc-scraper-pool" \
+  --project="${PROJECT_ID}" \
+  --location="global" \
+  --format="value(name)"
+projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool
+(base) ➜  tests git:(main) ✗ export WORKLOAD_IDENTITY_POOL_ID="projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool"
+(base) ➜  tests git:(main) ✗ gcloud iam workload-identity-pools providers create-oidc "wotc-scraper-provider" \
+  --project="${PROJECT_ID}" \
+  --location="global" \
+  --workload-identity-pool="wotc-scraper-pool" \
+  --display-name="Scraper Provider" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
+  --issuer-uri="https://token.actions.githubusercontent.com"
+Created workload identity pool provider [wotc-scraper-provider].
+(base) ➜  tests git:(main) ✗ export REPO="vp-82/wotc-scraper-gcp"               
+ 
+gcloud iam service-accounts add-iam-policy-binding "github-ci-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --project="${PROJECT_ID}" \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/${WORKLOAD_IDENTITY_POOL_ID}/attribute.repository/${REPO}"
+Updated IAM policy for serviceAccount [github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com].
+bindings:
+- members:
+  - principalSet://iam.googleapis.com/projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool/attribute.repository/vp-82/wotc-scraper-gcp
+  role: roles/iam.workloadIdentityUser
+etag: BwX9iiRsrQw=
+version: 1
+(base) ➜  tests git:(main) ✗ gcloud iam workload-identity-pools providers describe "wotc-scraper-provider" \
+  --project="${PROJECT_ID}" \
+  --location="global" \
+  --workload-identity-pool="wotc-scraper-pool" \
+  --format="value(name)"
+projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool/providers/wotc-scraper-provider
+(base) ➜  tests git:(main) ✗ gcloud projects add-iam-policy-binding mtg-scraper-385015 \
+--member serviceAccount:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com \
+--role roles/datastore.owner
+
+Updated IAM policy for project [mtg-scraper-385015].
+bindings:
+- members:
+  - serviceAccount:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
+  role: roles/datastore.owner
+- members:
+  - serviceAccount:firebase-service-account@firebase-sa-management.iam.gserviceaccount.com
+  - serviceAccount:service-1030920709279@gcp-sa-firebase.iam.gserviceaccount.com
+  role: roles/firebase.managementServiceAgent
+- members:
+  - serviceAccount:firebase-adminsdk-51u2i@mtg-scraper-385015.iam.gserviceaccount.com
+  role: roles/firebase.sdkAdminServiceAgent
+- members:
+  - serviceAccount:service-1030920709279@firebase-rules.iam.gserviceaccount.com
+  role: roles/firebaserules.system
+- members:
+  - serviceAccount:mtg-service-account@mtg-scraper-385015.iam.gserviceaccount.com
+  - serviceAccount:service-1030920709279@gcp-sa-firestore.iam.gserviceaccount.com
+  role: roles/firestore.serviceAgent
+- members:
+  - serviceAccount:firebase-adminsdk-51u2i@mtg-scraper-385015.iam.gserviceaccount.com
+  role: roles/iam.serviceAccountTokenCreator
+- members:
+  - user:vaclav@pechtor.ch
+  role: roles/owner
+- members:
+  - serviceAccount:service-1030920709279@gcp-sa-pubsub.iam.gserviceaccount.com
+  role: roles/pubsub.serviceAgent
+etag: BwX9il9Xveg=
+version: 1
