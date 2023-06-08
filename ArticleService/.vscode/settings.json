@@ -1,9 +1,13 @@
 {
     "python.testing.pytestArgs": [
-        "tests"
+        "${workspaceFolder}/tests/unit/",
+        "${workspaceFolder}/tests/integration/",
+        "${workspaceFolder}/tests/performance/",
+        "-s",
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
     "python.testing.pytestEnabled": true,
-    "terminal.integrated.env.osx": {"PYTHONPATH": "${workspaceFolder}"}
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "terminal.integrated.env.osx": {"PYTHONPATH": "${workspaceFolder}"},
 }
