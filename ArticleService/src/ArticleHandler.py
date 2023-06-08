@@ -1,9 +1,10 @@
 # Standard library imports
-from datetime import datetime
-import hashlib
 import abc
-from typing import List, Optional
+import hashlib
 import logging
+from datetime import datetime
+from typing import List, Optional
+
 
 class ArticleLink:
     def __init__(self, link_url: str, link_added_at: Optional[datetime] = None) -> None:

@@ -1,17 +1,14 @@
-import abc
-from typing import List, Optional
-from google.cloud import firestore_v1
 from datetime import datetime
-import sys
+from typing import List, Optional
+
+from google.cloud import firestore_v1
 
 # Local imports
-from src.ArticleHandler import ArticleLinkAdapter, ArticleLink
-
-
+from src.ArticleHandler import ArticleLink, ArticleLinkAdapter
 
 
 class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
-    def __init__(self, firestore_collection: firestore_v1.collection.CollectionReference) -> None:
+    def __init__(self, firestore_collection: firestore_v1.CollectionReference) -> None:
         super().__init__()
         self.collection = firestore_collection
 
@@ -39,7 +36,7 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
         links = []
         for doc in self.collection.stream():
             data = doc.to_dict()
-            if "url" in data and "link_added_at" in data:
+            if data is not None and "url" in data and "link_added_at" in data:
                 link = ArticleLink(
                     link_url=data["url"],
                     link_added_at=data["link_added_at"]
@@ -49,18 +46,20 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
 
 
 
+
     def _get_link_by_hash(self, url_hash: str) -> List[ArticleLink]:
         doc_ref = self.collection.document(url_hash)
-        # doc = doc_ref.get()
+        doc = doc_ref.get()  # Get the DocumentSnapshot
 
-        if doc_ref.exists:
-            data = doc_ref.to_dict()
-            return [ArticleLink(
-                link_url=data["url"],
-                link_added_at=data["link_added_at"]
-            )]
-        else:
-            return []
+        if doc.exists:  # Now you can use .exists
+            data = doc.to_dict()
+            if data is not None:
+                return [ArticleLink(
+                    link_url=data["url"],
+                    link_added_at=data["link_added_at"]
+                )]
+        return []
+
 
     def _get_links_by_date_range(self, start_date: datetime, end_date: datetime) -> List[ArticleLink]:
         self.logger.info(f'Retrieving links between dates: {start_date} - {end_date}')
@@ -69,12 +68,13 @@ class FirestoreArticleLinkAdapter(ArticleLinkAdapter):
         docs = query.stream()
 
         for doc in docs:
-            data = doc.to_dict()
-            if "url" in data and "link_added_at" in data:
-                link = ArticleLink(
-                    link_url=data["url"],
-                    link_added_at=data["link_added_at"]
-                )
-                links.append(link)
+            if doc.exists:  # Check if the document exists
+                data = doc.to_dict()
+                if data is not None and "url" in data and "link_added_at" in data:
+                    link = ArticleLink(
+                        link_url=data["url"],
+                        link_added_at=data["link_added_at"]
+                    )
+                    links.append(link)
 
         return links

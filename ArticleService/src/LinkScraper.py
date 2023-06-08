@@ -1,16 +1,14 @@
-import os
-import json
-import time
 import datetime
-from typing import List, Tuple
+import logging
+import time
+from typing import List, Optional
+
 import requests
 from bs4 import BeautifulSoup
 from firebase_admin import auth, credentials, firestore
-import firebase_admin
-import logging
 
-from src.GCPHandler import FirestoreArticleLinkAdapter
 from src.ArticleHandler import ArticleLink
+from src.GCPHandler import FirestoreArticleLinkAdapter
 
 
 class Scraper:
@@ -18,8 +16,9 @@ class Scraper:
         self.adapter = adapter
         self.logger = logging.getLogger(__name__)
 
-    def _fetch_and_parse_page_content(self, page_number: int) -> BeautifulSoup:
+    def _fetch_and_parse_page_content(self, page_number: int) -> Optional[BeautifulSoup]:
         time.sleep(2)
+        response = None
         try:
             response = requests.get(f'https://magic.wizards.com/en/news/archive?search&page={page_number}&category=all&author=all&order=newest')
             response.raise_for_status()
@@ -28,7 +27,12 @@ class Scraper:
             self.logger.error(f'HTTP error occurred: {http_err}') 
         except Exception as err:
             self.logger.error(f'Error occurred: {err}') 
-        return BeautifulSoup(response.text, 'html.parser')
+
+        if response is not None:
+            return BeautifulSoup(response.text, 'html.parser')
+        else:
+            return None
+
 
     def _extract_links_from_soup(self, soup: BeautifulSoup) -> List[str]:
         links = []
@@ -46,7 +50,8 @@ class Scraper:
     def _create_link_info(self, link: str) -> ArticleLink:
         return ArticleLink(
             link_url=link,
-            link_added_at=datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S"),
+            link_added_at=datetime.datetime.now()
+            # link_added_at=datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S"),
         )
 
     def _load_known_link_ids(self) -> List[str]:
@@ -71,9 +76,13 @@ class Scraper:
         known_link_ids = self._load_known_link_ids()
         for i in range(from_page, to_page):
             soup = self._fetch_and_parse_page_content(i)
+            if soup is None:
+                self.logger.warning(f'Failed to fetch and parse content from page {i}')
+                continue
             links = self._extract_links_from_soup(soup)
             self._save_new_links(links, known_link_ids)
             if i % 10 == 0:
                 self.logger.info(f'Page: {i}')
         self.logger.info(f'Finished scraping links from page {from_page} to page {to_page}')
+
 

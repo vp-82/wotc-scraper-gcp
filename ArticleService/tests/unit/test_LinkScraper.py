@@ -1,17 +1,17 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from bs4 import BeautifulSoup
 import datetime
-import requests_mock
-import re
-from google.cloud import firestore
-import os
 import logging
+import os
+import re
+from unittest.mock import MagicMock, patch
 
+import pytest
+import requests_mock
+from bs4 import BeautifulSoup
+from google.cloud import firestore
 
-from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
-from src.GCPHandler import FirestoreArticleLinkAdapter
 from src.ArticleHandler import ArticleLink
+from src.GCPHandler import FirestoreArticleLinkAdapter
+from src.LinkScraper import FirestoreArticleLinkAdapter, Scraper
 
 # Setup logger right below imports
 logger = logging.getLogger(__name__)
@@ -88,9 +88,9 @@ def test_extract_links_from_soup(scraper, html_content_1, html_content_2):
 
 def test_load_known_link_ids(scraper):
     link1 = ArticleLink('https://magic.wizards.com/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields', 
-                        datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S"))
+                        datetime.datetime.now())
     link2 = ArticleLink('https://magic.wizards.com/en/news/making-magic/crafting-the-ring-part-1', 
-                        datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S"))
+                        datetime.datetime.now())
 
     scraper_obj, adapter = scraper
     adapter.get_links.return_value = [link1, link2]
@@ -113,14 +113,14 @@ def test_create_link_info(scraper):
 
     assert isinstance(result, ArticleLink)
     assert result.url == link
-    assert isinstance(result.link_added_at, str)  # as you convert the datetime object to a string
+    assert isinstance(result.link_added_at, datetime.datetime)  # as you convert the datetime object to a string
 
 def test_save_new_links(scraper):
     logger = logging.getLogger('test_save_new_links')
     logger.info('Running test_save_new_links...')
 
     scraper_obj, adapter = scraper
-    known_link_ids = [ArticleLink(url, datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S")).url_hash 
+    known_link_ids = [ArticleLink(url, datetime.datetime.now()).url_hash 
                       for url in ['https://magic.wizards.com/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields', 
                                   'https://magic.wizards.com/en/news/making-magic/crafting-the-ring-part-1']]
     new_links = ['https://magic.wizards.com/new_link']
@@ -133,7 +133,8 @@ def test_save_new_links(scraper):
 def test_scrape_links(mock_get, scraper, html_content_two_articles):
     scraper_obj, adapter = scraper
     mock_get.side_effect = [MagicMock(text=html_content_two_articles)]
-    adapter.get_links.return_value = [ArticleLink('https://magic.wizards.com/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields', datetime.datetime.now().strftime("%Y-%m-%d, %H:%M:%S"))] 
+    adapter.get_links.return_value = [ArticleLink('https://magic.wizards.com/en/news/announcements/the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields', 
+                                                  datetime.datetime.now())] 
 
     scraper_obj.scrape_links(1, 2)
 

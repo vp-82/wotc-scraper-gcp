@@ -1,10 +1,11 @@
 # test_GCPHandler_pytest.py
-import sys
 import logging
+import sys
+from datetime import datetime
+from unittest.mock import MagicMock, PropertyMock
 
 import pytest
-from datetime import datetime
-from unittest.mock import MagicMock
+
 from src.ArticleHandler import ArticleLink
 from src.GCPHandler import FirestoreArticleLinkAdapter
 
@@ -19,10 +20,18 @@ def firestore_adapter():
     firestore_client = MagicMock()
     mock_collection = MagicMock()
     mock_doc = MagicMock()
-    mock_doc.to_dict.return_value = {
+    mock_doc_ref = MagicMock()
+    mock_doc_ref.to_dict.return_value = {
         "url": "https://magic.wizards.com/en/news/mtg-arena/mtg-arena-announcements-may-1-2023",
         "url_hash": "66ddaa70da65a525b5dc64efc8fe17b8",
         "link_added_at": timestamp
+    }
+    mock_doc.get.return_value = mock_doc_ref
+
+    mock_doc.to_dict.return_value = {
+    "url": "https://magic.wizards.com/en/news/mtg-arena/mtg-arena-announcements-may-1-2023",
+    "url_hash": "66ddaa70da65a525b5dc64efc8fe17b8",
+    "link_added_at": timestamp
     }
     mock_collection.stream.return_value = [mock_doc]
 
@@ -86,7 +95,8 @@ def test_get_link_by_hash(firestore_adapter):
     links = adapter.get_links(url_hash=article_link.url_hash)
 
     mock_collection.document.assert_called_once_with(article_link.url_hash)
-    doc_ref.call_count == 2
+    mock_doc.get.return_value.to_dict.assert_called_once()
+
 
     assert len(links) == 1
     assert links[0].url == article_link.url
@@ -122,17 +132,18 @@ def test_get_link_by_non_existent_hash(firestore_adapter):
     url_hash = 'nonexistenthash'
 
     # configure mock to return no document with the specified hash
-    doc_ref = MagicMock()
-    mock_doc.exists = False  # make the document non-existent
-    doc_ref.get.return_value = mock_doc
-    mock_collection.document.return_value = doc_ref
+    mock_non_existing = MagicMock()
+    type(mock_non_existing).exists = PropertyMock(return_value=False) #==> Here we set the PropertyMock for exists to return False 
+
+    mock_doc.get.return_value = mock_non_existing
     logger.info(f"Get link by non existing hash: {url_hash}")
     links = adapter.get_links(url_hash=url_hash)
 
     mock_collection.document.assert_called_once_with(url_hash)
-    doc_ref.call_count == 2
+    mock_doc.get.assert_called_once()
 
     assert len(links) == 0  # The list should be empty since no document was found
+
 
 
 
