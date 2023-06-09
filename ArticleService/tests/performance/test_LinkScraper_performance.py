@@ -1,12 +1,12 @@
-import pytest
-from google.cloud import firestore
+import logging
 import os
 import time
 
-import logging
+import pytest
+from google.cloud import firestore
 
-from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
-from src.ArticleHandler import ArticleLink
+from src.article_handler import ArticleLink
+from src.link_scraper import FirestoreArticleLinkAdapter, Scraper
 
 logger = logging.getLogger(__name__)
 

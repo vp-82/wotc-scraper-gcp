@@ -1,13 +1,12 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from google.cloud import firestore
-import os
-
-
-from src.LinkScraper import Scraper, FirestoreArticleLinkAdapter
-from src.ArticleHandler import ArticleLink
-
 import logging
+import os
+from unittest.mock import MagicMock, patch
+
+import pytest
+from google.cloud import firestore
+
+from src.article_handler import ArticleLink
+from src.link_scraper import FirestoreArticleLinkAdapter, Scraper
 
 logger = logging.getLogger(__name__)
 

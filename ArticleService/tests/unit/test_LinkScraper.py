@@ -5,13 +5,11 @@ import re
 from unittest.mock import MagicMock, patch
 
 import pytest
-import requests_mock
 from bs4 import BeautifulSoup
 from google.cloud import firestore
 
-from src.ArticleHandler import ArticleLink
-from src.GCPHandler import FirestoreArticleLinkAdapter
-from src.LinkScraper import FirestoreArticleLinkAdapter, Scraper
+from src.article_handler import ArticleLink
+from src.link_scraper import FirestoreArticleLinkAdapter, Scraper
 
 # Setup logger right below imports
 logger = logging.getLogger(__name__)
@@ -56,7 +54,7 @@ def scraper():
     adapter = MagicMock(spec=FirestoreArticleLinkAdapter)
     return Scraper(adapter), adapter
 
-@patch('src.LinkScraper.requests.get')
+@patch('src.link_scraper.requests.get')
 def test_fetch_and_parse_page(mock_get, scraper):
     logger = logging.getLogger('test_fetch_and_parse_page')
     logger.info('Running test_fetch_and_parse_page...')
@@ -129,7 +127,7 @@ def test_save_new_links(scraper):
 
     assert len(known_link_ids) == 3
 
-@patch('src.LinkScraper.requests.get')
+@patch('src.link_scraper.requests.get')
 def test_scrape_links(mock_get, scraper, html_content_two_articles):
     scraper_obj, adapter = scraper
     mock_get.side_effect = [MagicMock(text=html_content_two_articles)]

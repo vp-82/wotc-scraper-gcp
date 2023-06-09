@@ -1,10 +1,11 @@
 # test_mtg_article_pytest.py
-import logging
-
-from datetime import datetime
 import hashlib
+import logging
+from datetime import datetime
+
 import pytest
-from src.ArticleHandler import ArticleLink, ArticleLinkAdapter
+
+from src.article_handler import ArticleLink, ArticleLinkAdapter
 
 # Setup logger right below imports
 logger = logging.getLogger(__name__)

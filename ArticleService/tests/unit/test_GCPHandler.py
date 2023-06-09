@@ -1,13 +1,12 @@
 # test_GCPHandler_pytest.py
 import logging
-import sys
 from datetime import datetime
 from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
-from src.ArticleHandler import ArticleLink
-from src.GCPHandler import FirestoreArticleLinkAdapter
+from src.article_handler import ArticleLink
+from src.firestore_article_link_adapter import FirestoreArticleLinkAdapter
 
 # Setup logger right below imports
 logger = logging.getLogger(__name__)
