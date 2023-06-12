@@ -1,14 +1,14 @@
-astroid @ file:///Users/runner/miniforge3/conda-bld/astroid_1684150134139/work
+astroid==2.15.5
 beautifulsoup4==4.12.2
 CacheControl==0.13.0
 cachetools==5.3.1
 certifi==2023.5.7
 cffi==1.15.1
 charset-normalizer==3.1.0
-colorama @ file:///home/conda/feedstock_root/build_artifacts/colorama_1666700638685/work
+colorama==0.4.6
 coverage==7.2.7
 cryptography==41.0.1
-dill @ file:///home/conda/feedstock_root/build_artifacts/dill_1666603105584/work
+dill==0.3.6
 firebase-admin==6.1.0
 flake8==6.0.0
 google-api-core==2.11.0
@@ -26,12 +26,13 @@ grpcio-status==1.54.2
 httplib2==0.22.0
 idna==3.4
 iniconfig==2.0.0
-isort @ file:///home/conda/feedstock_root/build_artifacts/isort_1675033873689/work
-lazy-object-proxy @ file:///Users/runner/miniforge3/conda-bld/lazy-object-proxy_1672877875800/work
-mccabe @ file:///home/conda/feedstock_root/build_artifacts/mccabe_1643049622439/work
+isort==5.12.0
+lazy-object-proxy==1.9.0
+mccabe==0.7.0
 msgpack==1.0.5
 packaging==23.1
-platformdirs @ file:///home/conda/feedstock_root/build_artifacts/platformdirs_1683850015520/work
+pip==23.1.2
+platformdirs==3.5.1
 pluggy==1.0.0
 proto-plus==1.22.2
 protobuf==4.23.2
@@ -41,18 +42,20 @@ pycodestyle==2.10.0
 pycparser==2.21
 pyflakes==3.0.1
 PyJWT==2.7.0
-pylint @ file:///home/conda/feedstock_root/build_artifacts/pylint_1683397482155/work
+pylint==2.17.4
 pyparsing==3.0.9
 pytest==7.3.1
 pytest-cov==4.1.0
 requests==2.31.0
 requests-mock==1.10.0
 rsa==4.9
+setuptools==67.7.2
 six==1.16.0
 soupsieve==2.4.1
-tomli @ file:///home/conda/feedstock_root/build_artifacts/tomli_1644342247877/work
-tomlkit @ file:///home/conda/feedstock_root/build_artifacts/tomlkit_1683028165096/work
-typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/typing_extensions_1685704949284/work
+tomli==2.0.1
+tomlkit==0.11.8
+typing_extensions==4.6.3
 uritemplate==4.1.1
 urllib3==1.26.16
-wrapt @ file:///Users/runner/miniforge3/conda-bld/wrapt_1677485661943/work
+wheel==0.40.0
+wrapt==1.15.0
