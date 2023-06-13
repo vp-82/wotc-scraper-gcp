@@ -23,7 +23,7 @@ from src.link_scraper import FirestoreArticleLinkAdapter, Scraper
 logger = logging.getLogger(__name__)
 
 
-@pytest.fixture
+@pytest.fixture(name='html_cont_1')
 def html_content_1():
     """
     Pytest fixture that returns a string of HTML content containing a single article link.
@@ -38,7 +38,7 @@ def html_content_1():
     """
 
 
-@pytest.fixture
+@pytest.fixture(name='html_cont_2')
 def html_content_2():
     """
     Pytest fixture that returns a string of HTML content containing a single article link.
@@ -53,7 +53,7 @@ def html_content_2():
     """
 
 
-@pytest.fixture
+@pytest.fixture(name="html_content_2_links")
 def html_content_two_articles():
     """
     Pytest fixture that returns a string of HTML content containing two article links.
@@ -206,14 +206,14 @@ def test_save_new_links(scraper):
 
 
 @patch('src.link_scraper.requests.get')
-def test_scrape_links(mock_get, scraper, html_content):
+def test_scrape_links(mock_get, scraper, html_content_2_links):
     """
     Test for the `scrape_links` method of the Scraper class.
     This method is the main link scraping process which orchestrates the fetching, parsing, extracting, and
     saving of links.
     """
     scraper_obj, adapter = scraper
-    mock_get.side_effect = [MagicMock(text=html_content)]
+    mock_get.side_effect = [MagicMock(text=html_content_2_links)]
     adapter.get_links.return_value = [
         ArticleLink(
             'https://magic.wizards.com/en/news/announcements/'

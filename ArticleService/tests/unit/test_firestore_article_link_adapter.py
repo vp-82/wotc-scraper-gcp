@@ -51,10 +51,10 @@ def fixture_firestore_adapter():
     }
     mock_collection.stream.return_value = [mock_doc]
 
-    def collection_side_effect():
+    def collection_side_effect(*args, **kwargs):
         return mock_collection
 
-    def document_side_effect():
+    def document_side_effect(*args, **kwargs):
         return mock_doc
 
     mock_collection.side_effect = collection_side_effect
