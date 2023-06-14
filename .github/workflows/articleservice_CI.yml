@@ -34,6 +34,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r ArticleService/requirements.txt
 
+    - name: Install linters
+      run: |
+        pip install pylint flake8
+
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/ArticleService" >> $GITHUB_ENV
 
@@ -41,15 +45,23 @@ jobs:
       run: |
         echo "CI_PIPELINE=true" >> $GITHUB_ENV
 
+    - name: Run pylint
+      run: |
+        pylint ArticleService/src
+
+    - name: Run flake8
+      run: |
+        flake8 ArticleService/src
+
     - name: Run unit tests
       run: |
         pytest ArticleService/tests/unit
 
     - name: Run integration tests
       run: |
-        pytest -m integration ArticleService/tests/integration/test_LinkScraper_integration.py
+        pytest -m integration ArticleService/tests/integration/
 
     # Uncomment the following section when you have performance tests ready to be included
     - name: Run performance tests
       run: |
-        pytest -m performance ArticleService/tests/performance/test_LinkScraper_performance.py
+        pytest -m performance ArticleService/tests/performance/
