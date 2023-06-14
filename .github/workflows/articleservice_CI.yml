@@ -47,7 +47,7 @@ jobs:
 
     - name: Run pylint
       run: |
-        pylint --rcfile=.pylintrc ./src/*.py ./tests/*.py
+        pylint ./src/*.py ./tests/*.py
 
     - name: Run flake8
       run: |
