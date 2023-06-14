@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ArticleService"
+version = "0.1.0"
+authors = [
+    {name = "Václav Pechtor", email = "blog@pechtor.ch"},
+]
+description = "Service to provide links to articles on https://magic.wizards.com"
+readme = "README.rst"
+requires-python = ">=3.9"
+keywords = ["service", "mtg", "articles", "links"]
+license = {text = "BSD-3-Clause"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "requests",
+    "google-cloud",
+    "beautifulsoup4"
+]
