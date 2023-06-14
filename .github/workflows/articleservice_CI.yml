@@ -51,7 +51,7 @@ jobs:
 
     - name: Run flake8
       run: |
-        flake8 ArticleService/src
+        flake8 --config=ArticleService/.flake8 ArticleService/src ArticleService/tests
 
     - name: Run unit tests
       run: |
