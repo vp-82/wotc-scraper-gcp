@@ -47,11 +47,11 @@ jobs:
 
     - name: Run pylint
       run: |
-        pylint ArticleService/src
+        pylint --rcfile=.pylintrc ./src/*.py ./tests/*.py
 
     - name: Run flake8
       run: |
-        flake8 ArticleService/src
+        flake8 ./src
 
     - name: Run unit tests
       run: |
