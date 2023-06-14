@@ -47,7 +47,7 @@ jobs:
 
     - name: Run pylint
       run: |
-        pylint --rcfile=ArticleService/pylintrc ArticleService/src/*.py ArticleService/tests/*.py
+        pylint --rcfile=ArticleService/.pylintrc ArticleService/src/*.py ArticleService/tests/*.py
 
     - name: Run flake8
       run: |
