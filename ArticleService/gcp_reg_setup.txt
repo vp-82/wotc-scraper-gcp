@@ -32,6 +32,12 @@ twine upload --repository-url https://europe-west6-python.pkg.dev/mtg-scraper-38
 4. Create key:
     gcloud iam service-accounts keys create ./key_github-actions-sa.json --iam-account github-actions-sa@mtg-scraper-385015.iam.gserviceaccount.com
 5. Create .pypirc file in $HOME:
+    Information is provided by running this command:
+    gcloud artifacts print-settings python --project=mtg-scraper-385015 \
+    --repository=dev-projects \
+    --location=europe-west6
+
+
     [distutils]
     index-servers =
         dev-projects
