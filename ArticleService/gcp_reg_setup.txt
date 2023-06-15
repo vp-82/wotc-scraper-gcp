@@ -1,0 +1,53 @@
+# Based on this blog post: https://python.plainenglish.io/how-to-store-python-packages-in-google-artifact-registry-9a28d80d8040
+# Also added information form https://cloud.google.com/artifact-registry/docs/python/store-python
+# Authentication: https://cloud.google.com/artifact-registry/docs/python/authentication
+
+gcloud artifacts repositories create dev-projects \
+   --repository-format=python --location=europe-west6
+
+or:
+
+
+
+twine upload --repository-url https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/ dist/* --skip-existing
+
+0. Set up keyring
+    pip install keyring
+    pip install keyrings.google-artifactregistry-auth
+1. Create repos:
+    gcloud artifacts repositories create dev-projects \
+        --repository-format=python \
+        --location=europe-west6 \
+        --description="Dev Projects Repo"
+2. Create service account:
+    gcloud config get-value project
+    gcloud iam service-accounts create github-actions-sa --description="Service Account for GitHub Actions" --display-name="GitHub Actions SA"
+3. Assign permissions
+    gcloud projects add-iam-policy-binding mtg-scraper-385015 --member="serviceAccount:github-actions-sa@mtg-scraper-385015.iam.gserviceaccount.com" --role="roles/artifactregistry.repoAdmin"
+4. Create key:
+    gcloud iam service-accounts keys create ./key_github-actions-sa.json --iam-account github-actions-sa@mtg-scraper-385015.iam.gserviceaccount.com
+5. Create .pypirc file in $HOME:
+    [distutils]
+    index-servers =
+        dev-projects
+
+    [dev-projects]
+    repository: https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/
+    username: "_json_key"
+    password: /Users/vaclavpechtor/Code/home_projects/wotc-scraper-gcp/ArticleService/key_github-actions-sa.json
+
+    # Insert the following snippet into your pip.conf
+
+    [global]
+    extra-index-url = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/
+
+6. Set up credentials:
+    export GOOGLE_APPLICATION_CREDENTIALS=/Users/vaclavpechtor/Code/home_projects/wotc-scraper-gcp/ArticleService/key_github-actions-sa.json
+7. Prepare pip for using ArtifactRepository
+    export VIRTUAL_ENV=$(dirname $(dirname $(which pip)))
+    code $VIRTUAL_ENV/pip.conf
+    Add:
+    [global]
+    extra-index-url = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/simple/
+8. Test:
+    pip install ArticleService

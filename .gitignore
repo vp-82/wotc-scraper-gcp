@@ -120,7 +120,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+# .env --> Removed to store .env file for flake8
 .venv
 env/
 venv/
@@ -162,5 +162,6 @@ cython_debug/
 # MacOS
 .DS_Store
 
-# GCP
+# GCP keys
 mtg-scraper*.json
+key_*.json
