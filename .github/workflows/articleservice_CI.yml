@@ -68,7 +68,7 @@ jobs:
 
     - name: Build Python package
       run: |
-        python -m pip install --upgrade setuptools wheel
+        python -m pip install --upgrade setuptools wheel 'build<0.10.0'
         python -m build ./ArticleService --sdist --wheel
 
     - name: Authenticate to Google Cloud
