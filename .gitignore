@@ -123,6 +123,7 @@ celerybeat.pid
 # .env --> Removed to store .env file for flake8
 .venv
 env/
+env_build/
 venv/
 ENV/
 env.bak/

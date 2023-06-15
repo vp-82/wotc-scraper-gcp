@@ -11,9 +11,11 @@ or:
 
 twine upload --repository-url https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/ dist/* --skip-existing
 
-0. Set up keyring
+0. Set up Python libs
     pip install keyring
     pip install keyrings.google-artifactregistry-auth
+    pip install twine
+    pip install pip_audit
 1. Create repos:
     gcloud artifacts repositories create dev-projects \
         --repository-format=python \
@@ -33,8 +35,6 @@ twine upload --repository-url https://europe-west6-python.pkg.dev/mtg-scraper-38
 
     [dev-projects]
     repository: https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/
-    username: "_json_key"
-    password: /Users/vaclavpechtor/Code/home_projects/wotc-scraper-gcp/ArticleService/key_github-actions-sa.json
 
     # Insert the following snippet into your pip.conf
 
