@@ -61,7 +61,6 @@ jobs:
       run: |
         pytest -m integration ArticleService/tests/integration/
 
-    # Uncomment the following section when you have performance tests ready to be included
     - name: Run performance tests
       run: |
         pytest -m performance ArticleService/tests/performance/
@@ -70,12 +69,6 @@ jobs:
       run: |
         python -m pip install --upgrade setuptools wheel 'build<0.10.0'
         python -m build ./ArticleService --sdist --wheel
-
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: 'projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool/providers/wotc-scraper-provider'
-        service_account: 'github-actions-sa@mtg-scraper-385015.iam.gserviceaccount.com'
 
     - name: Set up .pypirc
       run: |

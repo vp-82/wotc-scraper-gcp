@@ -24,11 +24,13 @@ twine upload --repository-url https://europe-west6-python.pkg.dev/mtg-scraper-38
         --repository-format=python \
         --location=europe-west6 \
         --description="Dev Projects Repo"
-2. Create service account:
+2. Create service account (if it doesn't exist yet):
     gcloud config get-value project
     gcloud iam service-accounts create github-actions-sa --description="Service Account for GitHub Actions" --display-name="GitHub Actions SA"
 3. Assign permissions
     gcloud projects add-iam-policy-binding mtg-scraper-385015 --member="serviceAccount:github-actions-sa@mtg-scraper-385015.iam.gserviceaccount.com" --role="roles/artifactregistry.repoAdmin"
+    Or use existing from CI:
+    gcloud projects add-iam-policy-binding mtg-scraper-385015 --member="serviceAccount:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com" --role="roles/artifactregistry.repoAdmin"
 4. Create key:
     gcloud iam service-accounts keys create ./key_github-actions-sa.json --iam-account github-actions-sa@mtg-scraper-385015.iam.gserviceaccount.com
 5. Create .pypirc file in $HOME:
