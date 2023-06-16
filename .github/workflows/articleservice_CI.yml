@@ -70,10 +70,16 @@ jobs:
         python -m pip install --upgrade setuptools wheel 'build<0.10.0'
         python -m build ./ArticleService --sdist --wheel
 
+        - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+  
+    - name: Authenticate gcloud CLI
+      run: |
+        gcloud auth login --update-adc
+        gcloud config set auth/impersonate_service_account github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
+
     - name: Set up .pypirc
       run: |
-        gcloud init --console-only
-        gcloud auth login
         gcloud artifacts print-settings python --project=mtg-scraper-385015 --repository=dev-projects --location=europe-west6 >> ~/.pypirc
 
     - name: Publish package

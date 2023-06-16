@@ -66,3 +66,15 @@ twine upload --repository-url https://europe-west6-python.pkg.dev/mtg-scraper-38
     twine upload -r dev-projects --verbose dist/*  
 8. Test:
     pip install ArticleService
+
+To rung gcloud in GitHub actions some more configuration is needed.
+
+9. Allow impersonating of service accounts:
+    gcloud iam service-accounts add-iam-policy-binding \
+    --role roles/iam.serviceAccountTokenCreator \
+    --member "serviceAccount:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com" \
+    github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
+
+
+
+
