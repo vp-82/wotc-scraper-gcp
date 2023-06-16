@@ -91,7 +91,7 @@ jobs:
     - name: Publish Package to Artifact Registry
       run: |
         python -m pip install twine
-        twine upload -r dev-projects ./dist/*
+        twine upload -r dev-projects ./ArticleService/dist/*
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ./key_github_ci_user.json
   
