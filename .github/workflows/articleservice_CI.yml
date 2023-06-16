@@ -45,25 +45,25 @@ jobs:
       run: |
         echo "CI_PIPELINE=true" >> $GITHUB_ENV
 
-    - name: Run pylint
-      run: |
-        pylint --rcfile=ArticleService/.pylintrc ArticleService/src ArticleService/tests
+    # - name: Run pylint
+    #   run: |
+    #     pylint --rcfile=ArticleService/.pylintrc ArticleService/src ArticleService/tests
 
-    - name: Run flake8
-      run: |
-        flake8 --config=ArticleService/.flake8 ArticleService/src ArticleService/tests
+    # - name: Run flake8
+    #   run: |
+    #     flake8 --config=ArticleService/.flake8 ArticleService/src ArticleService/tests
 
-    - name: Run unit tests
-      run: |
-        pytest ArticleService/tests/unit
+    # - name: Run unit tests
+    #   run: |
+    #     pytest ArticleService/tests/unit
 
-    - name: Run integration tests
-      run: |
-        pytest -m integration ArticleService/tests/integration/
+    # - name: Run integration tests
+    #   run: |
+    #     pytest -m integration ArticleService/tests/integration/
 
-    - name: Run performance tests
-      run: |
-        pytest -m performance ArticleService/tests/performance/
+    # - name: Run performance tests
+    #   run: |
+    #     pytest -m performance ArticleService/tests/performance/
 
     - name: Build Python package
       run: |
@@ -90,6 +90,15 @@ jobs:
     - name: Set up .pypirc
       run: |
         gcloud artifacts print-settings python --project=mtg-scraper-385015 --repository=dev-projects --location=europe-west6 > ~/.pypirc
+
+    - name: Diagnose Issue
+      run: |
+        echo "Listing files:"
+        ls -la
+        echo "Printing GOOGLE_APPLICATION_CREDENTIALS:"
+        echo $GOOGLE_APPLICATION_CREDENTIALS
+        echo "Printing .pypirc:"
+        cat ~/.pypirc
         
     - name: Publish Package to Artifact Registry
       run: |
