@@ -72,10 +72,11 @@ jobs:
 
     - name: Set Google Cloud credentials
       run: |
-        echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 --decode > /tmp/keyfile.json
+        echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}" | base64 --decode > /tmp/keyfile.json
         gcloud auth activate-service-account --key-file=/tmp/keyfile.json
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/keyfile.json
+      
       
 
     - name: Set up .pypirc
