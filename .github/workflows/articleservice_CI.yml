@@ -84,12 +84,17 @@ jobs:
       run: |
         gcloud auth activate-service-account --key-file=key_github_ci_user.json
     
-    - name: Set GOOGLE_APPLICATION_CREDENTIALS
-      run: echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key_github_ci_user.json" >> $GITHUB_ENV
+    # - name: Set GOOGLE_APPLICATION_CREDENTIALS
+    #   run: echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key_github_ci_user.json" >> $GITHUB_ENV
     
+    # - name: Set up .pypirc
+    #   run: |
+    #     gcloud artifacts print-settings python --project=mtg-scraper-385015 --repository=dev-projects --location=europe-west6 > ~/.pypirc
+
     - name: Set up .pypirc
       run: |
-        gcloud artifacts print-settings python --project=mtg-scraper-385015 --repository=dev-projects --location=europe-west6 > ~/.pypirc
+        echo -e "[distutils]\nindex-servers =\n    dev-projects\n\n[dev-projects]\nrepository: https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/\nusername: _json_key_base64\npassword: $(base64 < key_github_ci_user.json)" > ~/.pypirc
+
 
     - name: Diagnose Issue
       run: |
