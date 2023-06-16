@@ -12,17 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
-      id-token: 'write'
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        workload_identity_provider: 'projects/1030920709279/locations/global/workloadIdentityPools/wotc-scraper-pool/providers/wotc-scraper-provider'
-        service_account: 'github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com'
+    - name: Create service account key file from GitHub Secret
+      run: |
+        echo "${{ secrets.GCP_SA_KEY }}" > key.json
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -45,56 +42,43 @@ jobs:
       run: |
         echo "CI_PIPELINE=true" >> $GITHUB_ENV
 
-    # - name: Run pylint
-    #   run: |
-    #     pylint --rcfile=ArticleService/.pylintrc ArticleService/src ArticleService/tests
+    - name: Run pylint
+      run: |
+        pylint --rcfile=ArticleService/.pylintrc ArticleService/src ArticleService/tests
 
-    # - name: Run flake8
-    #   run: |
-    #     flake8 --config=ArticleService/.flake8 ArticleService/src ArticleService/tests
+    - name: Run flake8
+      run: |
+        flake8 --config=ArticleService/.flake8 ArticleService/src ArticleService/tests
 
-    # - name: Run unit tests
-    #   run: |
-    #     pytest ArticleService/tests/unit
+    - name: Run unit tests
+      run: |
+        pytest ArticleService/tests/unit
 
-    # - name: Run integration tests
-    #   run: |
-    #     pytest -m integration ArticleService/tests/integration/
+    - name: Run integration tests
+      run: |
+        pytest -m integration ArticleService/tests/integration/
 
-    # - name: Run performance tests
-    #   run: |
-    #     pytest -m performance ArticleService/tests/performance/
+    - name: Run performance tests
+      run: |
+        pytest -m performance ArticleService/tests/performance/
 
     - name: Build Python package
       run: |
         python -m pip install --upgrade setuptools wheel 'build<0.10.0'
         python -m build ./ArticleService --sdist --wheel
 
-    - name: Set up Google Cloud SDK
-      uses: google-github-actions/setup-gcloud@v0.3.0
-      with:
-          project_id: mtg-scraper-385015
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-              
-    - name: Generate Key File
+    - name: Authenticate with gcloud using service account key file
       run: |
-        gcloud iam service-accounts keys create ./key_github_ci_user.json --iam-account=github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
-    
-    - name: Authenticate gcloud with service account key
-      run: |
-        gcloud auth activate-service-account --key-file=key_github_ci_user.json
-    
-    # - name: Set GOOGLE_APPLICATION_CREDENTIALS
-    #   run: echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key_github_ci_user.json" >> $GITHUB_ENV
-    
-    # - name: Set up .pypirc
-    #   run: |
-    #     gcloud artifacts print-settings python --project=mtg-scraper-385015 --repository=dev-projects --location=europe-west6 > ~/.pypirc
+        gcloud auth activate-service-account --key-file=key.json
 
     - name: Set up .pypirc
       run: |
-        echo -e "[distutils]\nindex-servers =\n    dev-projects\n\n[dev-projects]\nrepository: https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/\nusername: _json_key_base64\npassword: $(base64 < key_github_ci_user.json)" > ~/.pypirc
-
+        echo '[distutils]' > ~/.pypirc
+        echo 'index-servers = dev-projects' >> ~/.pypirc
+        echo '[dev-projects]' >> ~/.pypirc
+        echo 'repository = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/' >> ~/.pypirc
+        echo 'username: _json_key_base64' >> ~/.pypirc
+        echo "password: $(base64 key.json)" >> ~/.pypirc
 
     - name: Diagnose Issue
       run: |
@@ -109,6 +93,3 @@ jobs:
       run: |
         python -m pip install twine
         twine upload -r dev-projects ./ArticleService/dist/*
-      
-      
-      
