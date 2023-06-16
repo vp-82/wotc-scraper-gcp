@@ -70,13 +70,13 @@ jobs:
         python -m pip install --upgrade setuptools wheel 'build<0.10.0'
         python -m build ./ArticleService --sdist --wheel
 
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-  
-    - name: Authenticate to Google Cloud
+    - name: Set Google Cloud credentials
       run: |
-        echo "$GOOGLE_APPLICATION_CREDENTIALS" > /tmp/keyfile.json
+        echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 --decode > /tmp/keyfile.json
         gcloud auth activate-service-account --key-file=/tmp/keyfile.json
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+      
 
     - name: Set up .pypirc
       run: |
