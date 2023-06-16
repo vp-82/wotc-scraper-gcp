@@ -77,6 +77,10 @@ To rung gcloud in GitHub actions some more configuration is needed.
     --member "serviceAccount:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com" \
     github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
 
+10. xy
+    gcloud projects add-iam-policy-binding mtg-scraper-385015 --member=serviceAccount:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com --role=roles/iam.serviceAccountKeyAdmin
+
+
 
 
 
