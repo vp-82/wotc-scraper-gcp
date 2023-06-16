@@ -85,7 +85,7 @@ jobs:
     - name: Publish package
       run: |
         python -m pip install twine
-        twine upload ./ArticleService/dist/*
+        twine upload -r dev-projects ./ArticleService/dist/*
 
     
       
