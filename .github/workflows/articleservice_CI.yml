@@ -75,7 +75,6 @@ jobs:
   
     - name: Authenticate gcloud CLI
       run: |
-        gcloud auth activate-service-account --key-file=/dev/null
         gcloud config set auth/impersonate_service_account github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
     
 
