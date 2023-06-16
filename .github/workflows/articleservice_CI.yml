@@ -73,9 +73,9 @@ jobs:
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.3.0
       with:
-        project_id: mtg-scraper-385015
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-            
+          project_id: mtg-scraper-385015
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+              
     - name: Generate Key File
       run: |
         gcloud iam service-accounts keys create ./key_github_ci_user.json --iam-account=github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
@@ -84,9 +84,8 @@ jobs:
       run: |
         gcloud auth activate-service-account --key-file=key_github_ci_user.json
     
-    - name: Configure Docker to use gcloud as a credential helper
-      run: |
-        gcloud auth configure-docker europe-west6-python.pkg.dev
+    - name: Set GOOGLE_APPLICATION_CREDENTIALS
+      run: echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key_github_ci_user.json" >> $GITHUB_ENV
     
     - name: Set up .pypirc
       run: |
@@ -96,5 +95,6 @@ jobs:
       run: |
         python -m pip install twine
         twine upload -r dev-projects ./ArticleService/dist/*
+      
       
       
