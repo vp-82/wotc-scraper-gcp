@@ -72,6 +72,7 @@ jobs:
 
     - name: Set up .pypirc
       run: |
+        gcloud init --console-only
         gcloud auth login
         gcloud artifacts print-settings python --project=mtg-scraper-385015 --repository=dev-projects --location=europe-west6 >> ~/.pypirc
 
