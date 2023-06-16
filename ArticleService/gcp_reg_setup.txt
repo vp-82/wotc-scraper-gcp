@@ -54,6 +54,8 @@ twine upload --repository-url https://europe-west6-python.pkg.dev/mtg-scraper-38
 
 6. Set up credentials:
     export GOOGLE_APPLICATION_CREDENTIALS=/Users/vaclavpechtor/Code/home_projects/wotc-scraper-gcp/ArticleService/key_github-actions-sa.json
+    Alternative:
+    export GOOGLE_APPLICATION_CREDENTIALS=/Users/vaclavpechtor/Code/home_projects/wotc-scraper-gcp/ArticleService/key_githu_ci_user.json
 7. Prepare pip for using ArtifactRepository
     export VIRTUAL_ENV=$(dirname $(dirname $(which pip)))
     code $VIRTUAL_ENV/pip.conf
@@ -78,3 +80,10 @@ To rung gcloud in GitHub actions some more configuration is needed.
 
 
 
+gcloud projects get-iam-policy mtg-scraper-385015  \
+--flatten="bindings[].members" \
+--format='table(bindings.role)' \
+--filter="bindings.members:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com"
+
+
+gcloud iam service-accounts keys create ./key_githu_ci_user.json --iam-account=github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
