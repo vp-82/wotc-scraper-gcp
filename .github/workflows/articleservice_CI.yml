@@ -89,7 +89,7 @@ jobs:
         echo '[dev-projects]' >> ~/.pypirc
         echo 'repository = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/' >> ~/.pypirc
         echo 'username: _json_key_base64' >> ~/.pypirc
-        echo "password: $(base64 key.json)" >> ~/.pypirc
+        echo "password: ${{ secrets.GCP_SA_KEY }}" >> ~/.pypirc
         
     - name: Publish Package to Artifact Registry
       run: |
