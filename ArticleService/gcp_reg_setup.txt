@@ -81,13 +81,29 @@ To rung gcloud in GitHub actions some more configuration is needed.
     gcloud projects add-iam-policy-binding mtg-scraper-385015 --member=serviceAccount:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com --role=roles/iam.serviceAccountKeyAdmin
 
 
+-------------------------------------------------------------------------------------------------------
+How to set up auth with json file (only that works with twine)
+See also:
+https://medium.com/@verazabeida/using-json-in-your-github-actions-when-authenticating-with-gcp-856089db28cf
+https://stackoverflow.com/questions/74388673/cant-authenticate-google-cloud-with-service-key-on-github-actions-unexpected
+
+1. Convert the json to base64:
+    cat key_github_ci_user.json | base64
+2. Upload to GitHub as secrets
+3. Use the key (base64) in the action:
+        - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+4. Add the key (base64) in .pypirc:
+        - name: Set up .pypirc
+      run: |
+        echo '[distutils]' > ~/.pypirc
+        echo 'index-servers = dev-projects' >> ~/.pypirc
+        echo '[dev-projects]' >> ~/.pypirc
+        echo 'repository = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/' >> ~/.pypirc
+        echo 'username: _json_key_base64' >> ~/.pypirc
+        echo "password: ${{ secrets.GCP_SA_KEY }}" >> ~/.pypirc
+5. Twine uses the key automatically:
 
 
-
-gcloud projects get-iam-policy mtg-scraper-385015  \
---flatten="bindings[].members" \
---format='table(bindings.role)' \
---filter="bindings.members:github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com"
-
-
-gcloud iam service-accounts keys create ./key_githu_ci_user.json --iam-account=github-ci-service-account@mtg-scraper-385015.iam.gserviceaccount.com
