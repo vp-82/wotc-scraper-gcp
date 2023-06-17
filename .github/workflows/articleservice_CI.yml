@@ -20,6 +20,7 @@ jobs:
     - name: Create service account key file from GitHub Secret
       run: |
         echo "${{ secrets.GCP_SA_KEY }}" > key.json
+        echo "${{ secrets.GCP_SA_KEY }}" | base64 > key_base64.json
 
     - name: Authenticate with gcloud using service account key file
       run: |
