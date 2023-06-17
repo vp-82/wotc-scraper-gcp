@@ -22,6 +22,10 @@ jobs:
         echo "${{ secrets.GCP_SA_KEY }}" > key.json
         echo "${{ secrets.GCP_SA_KEY }}" | base64 > key_base64.json
 
+    - name: Check if key.json file was created correctly
+      run: |
+        cat key.json
+
     - name: Authenticate with gcloud using service account key file
       run: |
         gcloud auth activate-service-account --key-file=key.json
