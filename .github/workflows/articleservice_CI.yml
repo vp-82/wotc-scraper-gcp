@@ -96,4 +96,4 @@ jobs:
     - name: Test Installation
       run: |
         pip install ArticleService
-        python -c "import your_package; print(ArticleService.__version__)"
+        python -c "import ArticleService; print(ArticleService.__version__)"
