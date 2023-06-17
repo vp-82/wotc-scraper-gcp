@@ -22,13 +22,14 @@ jobs:
         echo "${{ secrets.GCP_SA_KEY }}" > key.json
         echo "${{ secrets.GCP_SA_KEY }}" | base64 > key_base64.json
 
-    - name: Check if key.json file was created correctly
-      run: |
-        cat key.json
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Authenticate with gcloud using service account key file
-      run: |
-        gcloud auth activate-service-account --key="${{ secrets.GCP_SA_KEY }}"
+    - name: Run glcoud info
+      run: gcloud info
 
     - name: Set up Python
       uses: actions/setup-python@v4
