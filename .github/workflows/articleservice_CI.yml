@@ -21,6 +21,10 @@ jobs:
       run: |
         echo "${{ secrets.GCP_SA_KEY }}" > key.json
 
+    - name: Authenticate with gcloud using service account key file
+      run: |
+        gcloud auth activate-service-account --key-file=key.json
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -67,10 +71,6 @@ jobs:
         python -m pip install --upgrade setuptools wheel 'build<0.10.0'
         python -m build ./ArticleService --sdist --wheel
 
-    - name: Authenticate with gcloud using service account key file
-      run: |
-        gcloud auth activate-service-account --key-file=key.json
-
     - name: Set up .pypirc
       run: |
         echo '[distutils]' > ~/.pypirc
@@ -79,15 +79,6 @@ jobs:
         echo 'repository = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/' >> ~/.pypirc
         echo 'username: _json_key_base64' >> ~/.pypirc
         echo "password: $(base64 key.json)" >> ~/.pypirc
-
-    - name: Diagnose Issue
-      run: |
-        echo "Listing files:"
-        ls -la
-        echo "Printing GOOGLE_APPLICATION_CREDENTIALS:"
-        echo $GOOGLE_APPLICATION_CREDENTIALS
-        echo "Printing .pypirc:"
-        cat ~/.pypirc
         
     - name: Publish Package to Artifact Registry
       run: |
