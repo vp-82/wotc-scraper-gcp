@@ -17,16 +17,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Create service account key file from GitHub Secret
-      run: |
-        echo "${{ secrets.GCP_SA_KEY }}" > key.json
-        echo "${{ secrets.GCP_SA_KEY }}" | base64 > key_base64.json
+    # - name: Create service account key file from GitHub Secret
+    #   run: |
+    #     echo "${{ secrets.GCP_SA_KEY }}" > key.json
+    #     echo "${{ secrets.GCP_SA_KEY }}" | base64 > key_base64.json
 
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v1'
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    # - id: 'auth'
+    #   name: 'Authenticate to Google Cloud'
+    #   uses: 'google-github-actions/auth@v1'
+    #   with:
+    #     credentials_json: ${{ secrets.GCP_SA_KEY }}
 
     - name: Run glcoud info
       run: gcloud info
