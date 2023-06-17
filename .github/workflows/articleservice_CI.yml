@@ -87,8 +87,9 @@ jobs:
 
     - name: Set up pip configuration
       run: |
-        echo "[global]" >> $HOME/.config/pip/pip.conf
-        echo "extra-index-url = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/simple/" >> $HOME/.config/pip/pip.conf
+        export VIRTUAL_ENV=$(dirname $(dirname $(which pip)))
+        echo "[global]" >> $VIRTUAL_ENV/pip.conf
+        echo "extra-index-url = https://europe-west6-python.pkg.dev/mtg-scraper-385015/dev-projects/simple/" >> $VIRTUAL_ENV/pip.conf
 
     - name: Test Installation
       run: |
