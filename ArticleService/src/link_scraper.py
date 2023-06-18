@@ -82,10 +82,11 @@ class Scraper:
             known_link_ids.append(link_info.url_hash)
         return known_link_ids
 
-    def _save_new_links(self, links: List[str], known_link_ids: List[str]) -> None:
+    def _save_new_links(self, links: List[str], known_link_ids: List[str]) -> bool:
         """
         Save new links
         """
+        found_only_new_links = True
         for link in links:
             link_info = self._create_link_info(link)
             if link_info.url_hash not in known_link_ids:
@@ -94,11 +95,14 @@ class Scraper:
                 known_link_ids.append(link_info.url_hash)
             else:
                 self.logger.info('Link with Id %s already exists', link_info.url_hash)
+                found_only_new_links = False
+        return found_only_new_links
 
-    def scrape_links(self, from_page: int, to_page: int) -> None:
+    def scrape_links(self, from_page: int, to_page: int, stop_on_existing: bool = False) -> bool:
         """
         Scrape links
         """
+        stopped_on_existing = False
         self.logger.info('Starting to scrape links from page %s to page %s', from_page, to_page)
         known_link_ids = self._load_known_link_ids()
         for i in range(from_page, to_page):
@@ -107,7 +111,12 @@ class Scraper:
                 self.logger.warning('Failed to fetch and parse content from page %s', i)
                 continue
             links = self._extract_links_from_soup(soup)
-            self._save_new_links(links, known_link_ids)
+            only_new_link_found = self._save_new_links(links, known_link_ids)
+            if stop_on_existing and not only_new_link_found:
+                self.logger.info('Stopped scraping due to encountering an existing link at page %s', i)
+                stopped_on_existing = True
+                return stopped_on_existing
             if i % 10 == 0:
                 self.logger.info('Page: %s', i)
         self.logger.info('Finished scraping links from page %s to page %s', from_page, to_page)
+        return stopped_on_existing

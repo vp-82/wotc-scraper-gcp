@@ -222,12 +222,55 @@ def test_scrape_links(mock_get, scraper, html_content_2_links):
         )
     ]
 
-    scraper_obj.scrape_links(1, 2)
-
+    stopped_on_existing = scraper_obj.scrape_links(1, 2)
+    assert stopped_on_existing is False
     assert mock_get.call_count == 1
     adapter.save_link.assert_called()
     # 'https://magic.wizards.com/en/news/making-magic/crafting-the-ring-part-1' is a new link
     assert adapter.save_link.call_count == 1
+
+
+@patch('src.link_scraper.requests.get')
+def test_scrape_existing_links_and_stop(mock_get, scraper, html_content_2_links):
+    """
+    Test for the `scrape_links` method of the Scraper class.
+    This method is the main link scraping process which orchestrates the fetching, parsing, extracting, and
+    saving of links.
+    """
+    scraper_obj, adapter = scraper
+    mock_get.side_effect = [MagicMock(text=html_content_2_links)]
+    adapter.get_links.return_value = [
+        ArticleLink(
+            'https://magic.wizards.com/en/news/announcements/'
+            'the-lord-of-the-rings-tales-of-middle-earth-battle-of-the-pelennor-fields',
+            datetime.datetime.now()
+        )
+    ]
+
+    stopped_on_existing = scraper_obj.scrape_links(1, 2, True)
+    assert stopped_on_existing is True
+    assert mock_get.call_count == 1
+    adapter.save_link.assert_called()
+    # 'https://magic.wizards.com/en/news/making-magic/crafting-the-ring-part-1' is a new link
+    assert adapter.save_link.call_count == 1
+
+
+@patch('src.link_scraper.requests.get')
+def test_scrape_nonexisting_links_and_continue(mock_get, scraper, html_content_2_links):
+    """
+    Test for the `scrape_links` method of the Scraper class.
+    This method is the main link scraping process which orchestrates the fetching, parsing, extracting, and
+    saving of links.
+    """
+    scraper_obj, adapter = scraper
+    mock_get.side_effect = [MagicMock(text=html_content_2_links)]
+
+    stopped_on_existing = scraper_obj.scrape_links(1, 2, True)
+    assert stopped_on_existing is False
+    assert mock_get.call_count == 1
+    adapter.save_link.assert_called()
+    # Known links are not used for this test, so both should have been saved (call_count == 2)
+    assert adapter.save_link.call_count == 2
 
 
 # Check if link format is valid
